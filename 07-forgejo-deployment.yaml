@@ -80,21 +80,3 @@ spec:
     port: 22
     targetPort: 22
   type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: forgejo-ingress
-  namespace: forgejo
-spec:
-  rules:
-  - host: forgejo.localhost
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: forgejo-svc
-            port:
-              number: 3000
