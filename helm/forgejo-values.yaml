@@ -1,0 +1,100 @@
+# Forgejo Helm Chart Values
+
+# General settings
+replicaCount: 1
+image:
+  pullPolicy: Always
+
+
+# Persistence configuration
+persistence:
+  enabled: true
+  create: false # Don't create new PVCs if they already exist
+  mount: true   # Mount existing PVCs
+  size: 10Gi
+  storageClass: "" # Use default storage class
+
+# Forgejo admin user configuration
+gitea:
+  admin:
+    existingSecret: "forgejo-admin-secret"
+    username: "forgejo_admin"
+    email: "admin@example.com"
+    passwordMode: "keepUpdated"
+
+# PostgreSQL HA configuration
+postgresql-ha:
+  enabled: true
+  image:
+    pullPolicy: Always
+  global:
+    postgresql:
+      username: "forgejo"
+      database: "forgejo"
+      existingSecret: "forgejo-postgresql-secret"
+      passwordKey: "password"
+  postgresql:
+    existingSecret: "forgejo-postgresql-secret"
+    passwordKey: "password"
+    repmgrPasswordKey: "repmgr-password"
+    postgresPasswordKey: "postgres-password"
+  pgpool:
+    existingSecret: "forgejo-postgresql-secret"
+    adminPasswordKey: "pgpool-admin-password"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: "" # Use default storage class
+      existingClaim: "" # Will use existing claim if found
+
+# Disable Redis Cluster as it's not needed for this setup
+redis-cluster:
+  enabled: false
+
+# Enable standalone Redis instead (more lightweight)
+redis:
+  enabled: true
+  image:
+    pullPolicy: Always
+  architecture: standalone
+  auth:
+    enabled: false # No authentication for simplicity
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+      storageClass: "" # Use default storage class
+      existingClaim: "" # Will use existing claim if found
+
+# Service configuration
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: ClusterIP
+    port: 22
+
+# Resource limits
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+# Security context for rootless image
+podSecurityContext:
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
+
+# Create a service account
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
