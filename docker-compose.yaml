@@ -1,0 +1,25 @@
+---
+services:
+  nginx:
+    image: backstead:0.1.4
+    container_name: backstead
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    ports:
+      - 80:80
+    restart: unless-stopped
+    networks:
+      - www
+      - forgejo
+      - radicale
+
+networks:
+  www:
+    external: true
+  forgejo:
+    external: true
+  radicale:
+    external: true
+

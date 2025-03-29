@@ -1,0 +1,10 @@
+[Unit]
+Description=Launch www(nginx).
+
+[Service]
+ExecStart=docker compose -f /etc/docker/compose/backstead.compose.yaml up 
+ExecStop=docker compose -f /etc/docker/compose/backstead.compose.yaml down
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
