@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forgejo
+  namespace: forgejo
+  labels:
+    app: forgejo
+    component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forgejo
+      component: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: forgejo
+        component: web
+    spec:
+      containers:
+      - name: forgejo
+        image: codeberg.org/forgejo/forgejo:10
+        ports:
+        - containerPort: 3000
+          name: http
+        - containerPort: 22
+          name: ssh
+        envFrom:
+        - configMapRef:
+            name: forgejo-config
+        - secretRef:
+            name: forgejo-secret
+        volumeMounts:
+        - name: forgejo-data
+          mountPath: /data
+        - name: timezone
+          mountPath: /etc/timezone
+          readOnly: true
+        - name: localtime
+          mountPath: /etc/localtime
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+      volumes:
+      - name: forgejo-data
+        persistentVolumeClaim:
+          claimName: forgejo-data-pvc
+      - name: timezone
+        hostPath:
+          path: /etc/timezone
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: forgejo-svc
+  namespace: forgejo
+  labels:
+    app: forgejo
+    component: web
+spec:
+  selector:
+    app: forgejo
+    component: web
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+  - name: ssh
+    port: 22
+    targetPort: 22
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: forgejo-ingress
+  namespace: forgejo
+spec:
+  rules:
+  - host: forgejo.localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: forgejo-svc
+            port:
+              number: 3000

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: forgejo
+  labels:
+    app: forgejo
+    component: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: forgejo
+      component: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: forgejo
+        component: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:14
+        ports:
+        - containerPort: 5432
+        envFrom:
+        - secretRef:
+            name: postgres-secret
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  namespace: forgejo
+  labels:
+    app: forgejo
+    component: postgres
+spec:
+  selector:
+    app: forgejo
+    component: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+  type: ClusterIP

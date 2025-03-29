@@ -1,0 +1,13 @@
+# Kubernetes secret files
+auth-secret.yaml
+
+# Local .htpasswd files
+.htpasswd
+
+# Other common files to ignore
+.DS_Store
+*.swp
+*.swo
+
+# Experimental files only for local development
+trunk
