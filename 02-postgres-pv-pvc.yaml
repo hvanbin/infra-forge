@@ -13,7 +13,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data/postgres"
+    path: "/mnt/data/forgejo-postgres"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
