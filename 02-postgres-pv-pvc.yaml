@@ -7,13 +7,21 @@ metadata:
     app: forgejo
     component: postgres
 spec:
-  storageClassName: manual
+  storageClassName: postgres-local
   capacity:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data/forgejo-postgres"
+  local:
+    path: "/var/lib/postgres-data"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - binning.net
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -24,7 +32,7 @@ metadata:
     app: forgejo
     component: postgres
 spec:
-  storageClassName: manual
+  storageClassName: postgres-local
   accessModes:
     - ReadWriteOnce
   resources:

@@ -6,13 +6,21 @@ metadata:
     type: local
     app: forgejo
 spec:
-  storageClassName: manual
+  storageClassName: forgejo-local
   capacity:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data/forgejo"
+  local:
+    path: "/var/lib/forgejo-data"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - binning.net
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -22,7 +30,7 @@ metadata:
   labels:
     app: forgejo
 spec:
-  storageClassName: manual
+  storageClassName: forgejo-local
   accessModes:
     - ReadWriteOnce
   resources:

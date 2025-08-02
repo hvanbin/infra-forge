@@ -20,6 +20,17 @@ spec:
         app: forgejo
         component: postgres
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: binning.net
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - binning.net
       containers:
       - name: postgres
         image: postgres:14

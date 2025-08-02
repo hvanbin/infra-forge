@@ -20,6 +20,17 @@ spec:
         app: forgejo
         component: web
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: binning.net
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - binning.net
       containers:
       - name: forgejo
         image: codeberg.org/forgejo/forgejo:10

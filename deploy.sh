@@ -31,6 +31,7 @@ kubectl -n forgejo wait --for=condition=available --timeout=300s deployment/post
 # Deploy Forgejo
 echo "Deploying Forgejo..."
 kubectl apply -f 07-forgejo-deployment.yaml
+kubectl apply -f 08-forgejo-ingress.yaml
 
 # Wait for Forgejo to be ready
 echo "Waiting for Forgejo to be ready..."
