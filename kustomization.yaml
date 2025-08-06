@@ -14,5 +14,8 @@ resources:
   - 07-forgejo-deployment.yaml
   - 08-forgejo-ingress.yaml
 
-commonLabels:
-  app: forgejo
+labels:
+  - includeSelectors: true
+    includeTemplates: true
+    pairs:
+      app: forgejo

@@ -19,6 +19,9 @@ spec:
       labels:
         app: forgejo
         component: postgres
+      annotations:
+        # Force pod restart on config changes
+        checksum/secret: "{{ include (print $.Template.BasePath \"/postgres-secret.yaml\") . | sha256sum }}"
     spec:
       nodeSelector:
         kubernetes.io/hostname: binning.net

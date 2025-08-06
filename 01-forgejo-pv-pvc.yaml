@@ -6,13 +6,13 @@ metadata:
     type: local
     app: forgejo
 spec:
-  storageClassName: forgejo-local
+  storageClassName: ""
   capacity:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
   local:
-    path: "/var/lib/forgejo-data"
+    path: "/mnt/data/forgejo"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -30,7 +30,7 @@ metadata:
   labels:
     app: forgejo
 spec:
-  storageClassName: forgejo-local
+  storageClassName: ""
   accessModes:
     - ReadWriteOnce
   resources:

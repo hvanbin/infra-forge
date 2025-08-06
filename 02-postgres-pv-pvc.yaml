@@ -7,13 +7,13 @@ metadata:
     app: forgejo
     component: postgres
 spec:
-  storageClassName: postgres-local
+  storageClassName: ""
   capacity:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
   local:
-    path: "/var/lib/postgres-data"
+    path: "/mnt/data/forgejo-postgres"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -32,7 +32,7 @@ metadata:
     app: forgejo
     component: postgres
 spec:
-  storageClassName: postgres-local
+  storageClassName: ""
   accessModes:
     - ReadWriteOnce
   resources:
