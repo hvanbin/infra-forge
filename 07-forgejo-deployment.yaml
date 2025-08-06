@@ -19,6 +19,9 @@ spec:
       labels:
         app: forgejo
         component: web
+      annotations:
+        # Force pod restart on config changes
+        checksum/config: "{{ include (print $.Template.BasePath \"/configmap.yaml\") . | sha256sum }}"
     spec:
       nodeSelector:
         kubernetes.io/hostname: binning.net
@@ -31,14 +34,21 @@ spec:
                 operator: In
                 values:
                 - binning.net
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: forgejo
         image: codeberg.org/forgejo/forgejo:10
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
           name: http
+          protocol: TCP
         - containerPort: 22
           name: ssh
+          protocol: TCP
         envFrom:
         - configMapRef:
             name: forgejo-config
@@ -60,6 +70,17 @@ spec:
           limits:
             memory: "2Gi"
             cpu: "1000m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - CHOWN
+            - FOWNER
+            - SETGID
+            - SETUID
+          readOnlyRootFilesystem: false
       volumes:
       - name: forgejo-data
         persistentVolumeClaim:
@@ -87,7 +108,9 @@ spec:
   - name: http
     port: 3000
     targetPort: 3000
+    protocol: TCP
   - name: ssh
     port: 22
     targetPort: 22
+    protocol: TCP
   type: ClusterIP
