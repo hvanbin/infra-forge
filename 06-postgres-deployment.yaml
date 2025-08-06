@@ -44,8 +44,11 @@ spec:
       containers:
       - name: postgres
         image: postgres:14
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5432
+          name: postgres
+          protocol: TCP
         envFrom:
         - secretRef:
             name: postgres-secret
@@ -77,6 +80,8 @@ spec:
     app: forgejo
     component: postgres
   ports:
-  - port: 5432
+  - name: postgres
+    port: 5432
     targetPort: 5432
+    protocol: TCP
   type: ClusterIP
