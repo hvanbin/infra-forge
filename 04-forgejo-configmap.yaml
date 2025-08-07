@@ -16,3 +16,10 @@ data:
   FORGEJO__database__SSL_MODE: "disable"
   FORGEJO__server__ROOT_URL: "https://forgejo.binning.dev/"
   FORGEJO__server__DOMAIN: "forgejo.binning.dev"
+  # These are needed to properly wire the internal SSH server for Forgejo.
+  # However, the init container used in the deployment is still needed.
+  FORGEJO__server__START_SSH_SERVER: "true"
+  FORGEJO__server__SSH_DOMAIN: "forgejo.binning.dev"
+  FORGEJO__server__SSH_PORT: "22"
+  FORGEJO__server__SSH_LISTEN_PORT: "2222"
+  FORGEJO__server__SSH_ROOT_PATH: "/data/ssh"
