@@ -1,6 +1,7 @@
 # Kubernetes secret files
 auth-secret.yaml
-
+03-postgres-secret.yaml
+05-forgejo-secret.yaml
 # Local .htpasswd files
 .htpasswd
 
